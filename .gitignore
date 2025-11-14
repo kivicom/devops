@@ -1,0 +1,27 @@
+# Terraform
+.terraform/
+.terraform/*
+
+*.tfstate
+*.tfstate.*
+crash.log
+
+# План/артефакты
+*.tfplan
+
+# Локальные override-файлы
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Переменные (часто содержат секреты)
+*.tfvars
+*.tfvars.json
+
+# CLI config (локально)
+.terraformrc
+terraform.rc
+
+# macOS
+.DS_Store
