@@ -32,3 +32,23 @@ module "ecr" {
   scan_on_push = true
   mutable      = "IMMUTABLE"
 }
+
+module "eks" {
+  source = "./modules/eks"
+
+  # имя и версия кластера
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+
+  # забираем VPC и приватные сабсети из локального модуля vpc
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnet_ids
+
+  # имя node group — можно привязать к имени кластера
+  node_group_name = "${var.cluster_name}-ng"
+
+  # размеры node group — имена СЛЕВА совпадают с variables в modules/eks/variables.tf
+  node_desired_size = var.node_group_desired_size
+  node_min_size     = var.node_group_min_size
+  node_max_size     = var.node_group_max_size
+}

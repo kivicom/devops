@@ -1,0 +1,40 @@
+# Default values for django-app
+
+# Application configuration
+replicaCount: 2
+
+# Docker image configuration
+image:
+  repository: "251342503781.dkr.ecr.eu-central-1.amazonaws.com/lesson-5-ecr"
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+# Horizontal Pod Autoscaler
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+# Environment variables (from .env file)
+config:
+  DATABASE_NAME: "igordb"
+  DATABASE_USER: "igoruser"
+  DATABASE_PASSWORD: "igorpassword"
+  DATABASE_HOST: "db"
+  DATABASE_PORT: "5432"
+  POSTGRES_DB: "igordb"
+  POSTGRES_USER: "igoruser"
+  POSTGRES_PASSWORD: "igorpassword"
+  DJANGO_PORT: "8000"
+  NGINX_PORT: "8080"
+
+# Chart naming
+nameOverride: ""
+fullnameOverride: ""
