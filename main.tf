@@ -52,3 +52,26 @@ module "eks" {
   node_min_size     = var.node_group_min_size
   node_max_size     = var.node_group_max_size
 }
+
+module "jenkins" {
+  source = "./modules/jenkins"
+
+  cluster_name     = module.eks.cluster_name
+  cluster_endpoint = module.eks.cluster_endpoint
+  cluster_ca_cert  = module.eks.cluster_certificate_authority_data
+
+  namespace = "jenkins"
+}
+
+module "argo_cd" {
+  source = "./modules/argo_cd"
+
+  cluster_name     = module.eks.cluster_name
+  cluster_endpoint = module.eks.cluster_endpoint
+  cluster_ca_cert  = module.eks.cluster_certificate_authority_data
+
+  namespace       = "argocd"
+  apps_repo_url   = "https://github.com/kivicom/devops.git"
+  apps_repo_path  = "charts/django-app"
+  apps_target_rev = "lesson-8-9"
+}

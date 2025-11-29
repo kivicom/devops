@@ -1,0 +1,10 @@
+{{- range .Values.repositories }}
+apiVersion: argoproj.io/v1alpha1
+kind: Repository
+metadata:
+  name: {{ .name }}
+spec:
+  type: git
+  url: {{ .url }}
+---
+{{- end }}

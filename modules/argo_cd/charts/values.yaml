@@ -1,0 +1,11 @@
+repositories:
+  - name: lesson-8-9
+    url: https://github.com/kivicom/devops.git
+
+applications:
+  - name: django-app
+    project: default
+    repoName: lesson-8-9
+    path: charts/django-app
+    targetRevision: main
+    namespace: default

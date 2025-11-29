@@ -1,0 +1,9 @@
+controller:
+  adminUser: admin
+  adminPassword: admin123
+
+persistence:
+  enabled: false
+
+service:
+  type: LoadBalancer
