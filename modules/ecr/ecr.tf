@@ -19,13 +19,13 @@ resource "aws_ecr_repository" "this" {
 
 resource "aws_ecr_repository_policy" "allow-account" {
   repository = aws_ecr_repository.this.name
-  policy     = jsonencode({
+  policy = jsonencode({
     Version = "2008-10-17",
     Statement = [{
       Sid       = "AllowAccountPullPush",
       Effect    = "Allow",
       Principal = { AWS = data.aws_caller_identity.current.account_id },
-      Action    = [
+      Action = [
         "ecr:BatchCheckLayerAvailability",
         "ecr:BatchGetImage",
         "ecr:CompleteLayerUpload",
@@ -43,7 +43,7 @@ resource "aws_ecr_repository_policy" "allow-account" {
 
 resource "aws_ecr_lifecycle_policy" "cleanup" {
   repository = aws_ecr_repository.this.name
-  policy     = jsonencode({
+  policy = jsonencode({
     rules = [{
       rulePriority = 1,
       description  = "Expire untagged images after 30",

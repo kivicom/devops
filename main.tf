@@ -75,3 +75,35 @@ module "argo_cd" {
   apps_repo_path  = "charts/django-app"
   apps_target_rev = "lesson-8-9"
 }
+
+module "rds" {
+  source = "./modules/rds"
+
+  name       = "lesson10-app-db"
+  use_aurora = false # true → Aurora, false → звичайна RDS
+
+  # Мережа
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  # Налаштування БД (standalone RDS)
+  engine         = "postgres"
+  engine_version = "14.11"
+  aurora_engine  = "aurora-postgresql"
+
+  instance_class = "db.t3.micro"
+  port           = 5432
+
+  db_name  = "appdb"
+  username = "dbadmin"
+  password = "change_me_please" #  tfvars
+
+  multi_az            = false
+  allocated_storage   = 20
+  skip_final_snapshot = true
+
+  # Доступ до БД
+  allowed_cidr_blocks           = ["10.0.0.0/16"]
+  parameter_group_family        = "postgres14"
+  aurora_parameter_group_family = "aurora-postgresql14"
+}

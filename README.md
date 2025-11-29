@@ -270,3 +270,92 @@ Application налаштовано на:
 - як застосувати Terraform,
 - як перевірити Jenkins job,
 - як побачити результат в Argo CD та повний потік CI/CD.
+
+
+---
+
+## DevOps Lesson 10 — Універсальний модуль RDS
+
+У цьому домашньому завданні до існуючої інфраструктури (VPC + EKS + ECR + Jenkins + Argo CD) додається гнучкий Terraform-модуль `modules/rds`, який уміє:
+
+- створювати **звичайну RDS-інстансу** (PostgreSQL / MySQL);
+- або **Aurora-кластер** (writer + reader endpoint),
+- автоматично піднімати:
+  - `aws_db_subnet_group`,
+  - `aws_security_group`,
+  - `parameter group` з базовими параметрами (`max_connections`, `log_statement`, `work_mem`).
+
+Перемикач `use_aurora` дозволяє однією і тією ж декларацією використовувати різні типи БД.
+
+### Приклад використання модуля
+
+```hcl
+module "rds" {
+  source = "./modules/rds"
+
+  name        = "lesson10-app-db"
+  use_aurora  = false # true → Aurora, false → звичайна RDS
+
+  # Мережа
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  # Налаштування БД (standalone RDS)
+  engine         = "postgres"
+  engine_version = "14.11"
+  instance_class = "db.t3.micro"
+  port           = 5432
+
+  db_name  = "appdb"
+  username = "dbadmin"
+  password = "change_me_please"
+
+  multi_аз            = false
+  allocated_storage   = 20
+  skip_final_snapshot = true
+
+  # Доступ до БД
+  allowed_cidr_blocks           = ["10.0.0.0/16"]
+  parameter_group_family        = "postgres14"
+  aurora_parameter_group_family = "aurora-postgresql14"
+}
+
+Щоб увімкнути Aurora-кластер — достатньо поставити use_aurora = true
+та (за потреби) підкоригувати aurora_engine, aurora_engine_version
+і aurora_parameter_group_family.
+
+Основні змінні модуля
+
+Коротка таблиця змінних (див. код modules/rds/variables.tf):
+
+name — базове імʼя ресурсів;
+
+use_aurora — перемикач між Aurora та звичайною RDS;
+
+engine, engine_version — тип та версія двигуна для RDS;
+
+aurora_engine, aurora_engine_version — для Aurora;
+
+instance_class, allocated_storage, multi_az;
+
+db_name, username, password;
+
+vpc_id, private_subnet_ids, allowed_cidr_blocks;
+
+parameter_group_family, aurora_parameter_group_family.
+
+Виводи модуля
+
+Модуль експортує:
+
+db_endpoint — основний endpoint для запису;
+
+reader_endpoint — reader endpoint (для Aurora);
+
+port — порт БД;
+
+security_group_id — SG, привʼязана до БД;
+
+subnet_group_name — імʼя DB Subnet Group;
+
+engine_in_use — фактичний тип двигуна (Aurora або standalone RDS).

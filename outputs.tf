@@ -40,3 +40,34 @@ output "ecr_repository_url" {
   description = "URL of the ECR repository"
   value       = module.ecr.repository_url
 }
+
+# --- RDS outputs ---
+output "rds_endpoint" {
+  description = "Primary write endpoint of the database (RDS instance or Aurora cluster)"
+  value       = module.rds.db_endpoint
+}
+
+output "rds_reader_endpoint" {
+  description = "Reader endpoint (for Aurora) або той самий endpoint для звичайної RDS"
+  value       = module.rds.reader_endpoint
+}
+
+output "rds_port" {
+  description = "Database port"
+  value       = module.rds.port
+}
+
+output "rds_security_group_id" {
+  description = "Security group ID attached to the database"
+  value       = module.rds.security_group_id
+}
+
+output "rds_subnet_group_name" {
+  description = "DB subnet group name"
+  value       = module.rds.subnet_group_name
+}
+
+output "rds_engine_in_use" {
+  description = "Engine actually used (Aurora or standalone)"
+  value       = module.rds.engine_in_use
+}
