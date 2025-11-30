@@ -1,0 +1,24 @@
+image:
+  repository: 120250729420.dkr.ecr.eu-central-1.amazonaws.com/dev-lesson-5-ecr
+  tag: v1.0.1
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: false
+
+config:
+  # These values will be overridden by Argo CD with RDS connection details
+  POSTGRES_HOST: "" 
+  POSTGRES_PORT: "5432"
+  POSTGRES_NAME: ""      # Will be set by Argo CD (rds_db_name)
+  POSTGRES_USER: ""      # Will be set by Argo CD (rds_username)
+  POSTGRES_PASSWORD: ""  # Will be set by Argo CD (rds_password)
+
+# Local PostgreSQL is disabled - using RDS instead
+postgresql:
+  enabled: false

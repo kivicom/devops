@@ -1,0 +1,55 @@
+# Project Configuration
+name   = "YOUR_APP_NAME"
+region = "eu-central-1"
+
+# Terraform Backend Configuration
+# S3 bucket for storing Terraform state (must be globally unique)
+bucket_name = "terraform-state-bucket-<unique-id>-<your-name>"
+table_name  = "terraform-locks"
+
+# EKS Node Configuration
+instance_type = "t2.medium"
+
+# ECR Repository Configuration
+repository_name = "ecr-repo-<unique-id>"
+
+# GitHub Configuration
+# Your GitHub repository URL
+github_repo_url = "https://github.com/<github_username>/<project_name>.git"
+# Branch that Jenkins will monitor and Argo CD will sync from
+github_branch   = "main"
+# Your GitHub username
+github_user     = "<github_username>"
+# GitHub Personal Access Token (PAT) with repo permissions
+# Generate at: https://github.com/settings/tokens
+github_pat      = "<your_github_pat_token>"
+
+# RDS Database Configuration
+# Strong password for the RDS database (required)
+rds_password = "<your_secure_password_here>"
+
+# Database name
+rds_database_name      = "myapp"
+# Database username
+rds_username           = "postgres"
+# Use Aurora PostgreSQL (true) or standard RDS PostgreSQL (false)
+rds_use_aurora         = true
+# Allow public access to RDS (not recommended for production)
+rds_publicly_accessible = false
+# Enable Multi-AZ deployment for high availability
+rds_multi_az           = true
+# Backup retention period in days
+rds_backup_retention_period = "7"
+# RDS instance class
+rds_instance_class     = "db.t4g.medium"
+
+# Aurora-specific settings (used when rds_use_aurora = true)
+rds_aurora_engine                = "aurora-postgresql"
+rds_aurora_engine_version        = "15.6"
+rds_aurora_parameter_group_family = "aurora-postgresql15"
+
+# Standard RDS settings (used when rds_use_aurora = false)
+rds_instance_engine                 = "postgres"
+rds_instance_engine_version         = "17.2"
+rds_instance_parameter_group_family = "postgres17"
+
