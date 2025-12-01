@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION     = 'eu-central-1'
+        ECR_REGISTRY   = '120250729420.dkr.ecr.eu-central-1.amazonaws.com'
+        ECR_REPOSITORY = 'dev-lesson-5-ecr'
+        IMAGE_TAG      = 'v1.0.1'
+    }
+
+    options {
+        timestamps()
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Берём код из того же репо и гілки, что задано в job (final-project)
+                checkout scm
+            }
+        }
+
+        stage('Build & Push Docker image') {
+            steps {
+                dir('Django') {
+                    sh '''
+                    echo "🔐 Логін в ECR..."
+                    aws ecr get-login-password --region ${AWS_REGION} \
+                      | docker login --username AWS --password-stdin ${ECR_REGISTRY}
+
+                    echo "🐳 Збираємо Docker-образ..."
+                    docker build -t ${ECR_REPOSITORY}:${IMAGE_TAG} .
+
+                    echo "🏷️ Тегуємо образ для ECR..."
+                    docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+
+                    echo "📤 Відправляємо образ в ECR..."
+                    docker push ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+
+                    echo "✅ Готово: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ CI pipeline успішно завершено"
+        }
+        failure {
+            echo "❌ Помилка під час CI-пайплайну, перевірте логи"
+        }
+    }
+}
